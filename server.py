@@ -20,11 +20,22 @@ while True:
     request = client_connection.recv(1024).decode()
     print(request)
 
-    with open("index.html", 'r') as f:
-        content = f.read()
+    # Parse HTTP headers - used to pass info. between client & server
+    header = request.split('\n')
+    filename = header[0].split()[1]
+    
+    if filename == '/':
+        filename = 'index.html'
 
-    # Send HTTP formatted string
-    response = "HTTP/1.0 200 OK\n\n" + content
+    try:
+        with open(filename, 'r') as f:
+            content = f.read()
+
+        # Send HTTP formatted string
+        response = "HTTP/1.0 200 OK\n\n" + content
+    except FileNotFoundError:
+        response = "HTTP/1.0 404 NOT FOUND\n\n<b>Page not found<b>"
+
     client_connection.sendall(response.encode())
     client_connection.close()
 
