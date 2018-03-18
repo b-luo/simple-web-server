@@ -20,8 +20,11 @@ while True:
     request = client_connection.recv(1024).decode()
     print(request)
 
+    with open("index.html", 'r') as f:
+        content = f.read()
+
     # Send HTTP formatted string
-    response = "HTTP/1.0 200 OK\n\n<h1>Hello World!</h1>"
+    response = "HTTP/1.0 200 OK\n\n" + content
     client_connection.sendall(response.encode())
     client_connection.close()
 
